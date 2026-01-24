@@ -24,16 +24,15 @@ jobs:
 
       - name: Run Login API Test
         env:
-          LOGIN_EMAIL: ${{ secrets.LOGIN_EMAIL }}
-          LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
-          MARKETPLACE_REF_ID: ${{ secrets.MARKETPLACE_REF_ID }}
-        run: |
+         APP_CONFIG: ${{ secrets.APP_CONFIG }}
+
           pytest -v
 
       - name: Notify Google Chat on Failure
         if: failure()
         env:
-          GCHAT_WEBHOOK_URL: ${{ secrets.GCHAT_WEBHOOK_URL }}
+          APP_CONFIG: ${{ secrets.APP_CONFIG }}
+
         run: |
           python notify_google_chat.py
 
