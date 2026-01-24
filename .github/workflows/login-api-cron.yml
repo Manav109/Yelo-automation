@@ -1,1 +1,39 @@
+name: Yelo Login API Automation
+
+on:
+  schedule:
+    - cron: '30 6,10,14,18,22 * * *'
+  workflow_dispatch:
+
+jobs:
+  api-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Login API Test
+        env:
+          LOGIN_EMAIL: ${{ secrets.LOGIN_EMAIL }}
+          LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+          MARKETPLACE_REF_ID: ${{ secrets.MARKETPLACE_REF_ID }}
+        run: |
+          pytest -v
+
+      - name: Notify Google Chat on Failure
+        if: failure()
+        env:
+          GCHAT_WEBHOOK_URL: ${{ secrets.GCHAT_WEBHOOK_URL }}
+        run: |
+          python notify_google_chat.py
 
